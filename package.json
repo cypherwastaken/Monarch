@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "cohere-ai": "^1.0.0"
+  }
+}
