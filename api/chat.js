@@ -1,11 +1,11 @@
-const { CohereClient } = require("cohere-ai");
-const fetch = require('node-fetch');
+import { CohereClient } from "cohere-ai";  // ES module import syntax
+import fetch from 'node-fetch';  // ES module import syntax
 
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY,
 });
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   console.log("Received request:", req.method);
   console.log("API Key:", process.env.COHERE_API_KEY);
   
