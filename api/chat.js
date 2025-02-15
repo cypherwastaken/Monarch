@@ -5,6 +5,9 @@ const cohere = new CohereClient({
 });
 
 module.exports = async (req, res) => {
+  console.log("Received request:", req.method);
+  console.log("API Key:", process.env.COHERE_API_KEY);
+  
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
@@ -13,9 +16,12 @@ module.exports = async (req, res) => {
   const { prompt } = req.body;
 
   if (!prompt) {
+    console.log("No prompt provided");
     res.status(400).json({ error: "No prompt provided" });
     return;
   }
+
+  console.log("Prompt received:", prompt);
 
   try {
     const stream = await cohere.chatStream({
@@ -28,6 +34,7 @@ module.exports = async (req, res) => {
 
     let responseText = "";
     for await (const chat of stream) {
+      console.log("Chat event:", chat);
       if (chat.eventType === "text-generation") {
         responseText += chat.text;
       }
