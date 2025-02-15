@@ -1,4 +1,4 @@
-import { CohereClient } from "cohere-ai";
+const { CohereClient } = require("cohere-ai");
 
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY,
@@ -21,13 +21,12 @@ module.exports = async (req, res) => {
     const stream = await cohere.chatStream({
       model: "command-nightly",
       message: prompt,
-      temperature: 0.2,
+      temperature: 0.1,
       chatHistory: [],
       promptTruncation: "AUTO",
     });
 
     let responseText = "";
-
     for await (const chat of stream) {
       if (chat.eventType === "text-generation") {
         responseText += chat.text;
