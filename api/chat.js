@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     const apiKey = process.env.COHERE_API_KEY;
 
     try {
-        const response = await fetch("https://api.cohere.ai/chat", {
+        const response = await fetch("https://api.cohere.ai/v1/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
