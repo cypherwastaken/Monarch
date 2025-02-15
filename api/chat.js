@@ -1,5 +1,5 @@
-import { CohereClient } from './node_modules/cohere-ai';
-import fetch from './node_modules/node-fetch';
+import { CohereClient } from 'cohere-ai';
+import fetch from 'node-fetch';
 
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY,
