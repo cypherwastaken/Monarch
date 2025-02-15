@@ -1,40 +1,43 @@
-const fetch = require("node-fetch");
+import { CohereClient } from "cohere-ai";
+
+const cohere = new CohereClient({
+  token: process.env.COHERE_API_KEY,
+});
 
 module.exports = async (req, res) => {
-    if (req.method !== "POST") {
-        res.status(405).send("Method Not Allowed");
-        return;
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    res.status(400).json({ error: "No prompt provided" });
+    return;
+  }
+
+  try {
+    const stream = await cohere.chatStream({
+      model: "command-nightly",
+      message: prompt,
+      temperature: 0.2,
+      chatHistory: [],
+      promptTruncation: "AUTO",
+    });
+
+    let responseText = "";
+
+    for await (const chat of stream) {
+      if (chat.eventType === "text-generation") {
+        responseText += chat.text;
+      }
     }
 
-    const { prompt } = req.body;
+    res.status(200).json({ response: responseText });
 
-    if (!prompt) {
-        res.status(400).json({ error: "No prompt provided" });
-        return;
-    }
-
-    const apiKey = process.env.COHERE_API_KEY;
-
-    try {
-        const response = await fetch("https://api.cohere.ai/v1/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                model: "command-nightly",
-                message: prompt,
-                temperature: 0.4,
-                max_tokens: 300,
-                chatHistory: [],
-                promptTruncation: "AUTO"
-            }),
-        });
-
-        const data = await response.json();
-        res.status(200).json({ response: data.text });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch response" });
-    }
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.status(500).json({ error: "Failed to fetch response", details: error.message });
+  }
 };
