@@ -1,4 +1,5 @@
 const { CohereClient } = require("cohere-ai");
+const fetch = require('node-fetch');
 
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY,
